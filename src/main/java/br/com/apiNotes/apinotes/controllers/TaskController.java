@@ -12,9 +12,10 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/tasks")
 public class TaskController {
-    @PostMapping("/{email}/tasksUser")
+    @PostMapping("/{email}")
     public ResponseEntity addTasks(@PathVariable String email, @RequestBody @Valid AddTask newTask){
         var user = DataBase.getUserByEmail(email);
 
@@ -22,10 +23,10 @@ public class TaskController {
             return ResponseEntity.badRequest().body(new ErrorData("Usuário não localizado."));
         }
         user.getTasks().add(new Task(newTask));
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().body(newTask);
     }
 
-    @GetMapping("/{email}/tasksUser")
+    @GetMapping("/{email}")
     public ResponseEntity getTasks(@PathVariable String email, @RequestParam(required = false) String title, @RequestParam(required = false) boolean archived){
         var tasks = DataBase.getAllTasks(email);
         var esseTemReatribuicao = DataBase.getEmail(email).getTasks();
@@ -46,7 +47,7 @@ public class TaskController {
         return ResponseEntity.ok().body(tasks);
     }
 
-    @DeleteMapping ("/{email}/tasksUser/{idTask}")
+    @DeleteMapping ("/{email}/{idTask}")
     public ResponseEntity deleteTasks(@PathVariable String email, @PathVariable UUID idTask){
         var user = DataBase.getUserByEmail(email);
         if(user == null) {
@@ -58,7 +59,7 @@ public class TaskController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping ("/{email}/tasksUser/{idTask}")
+    @PutMapping ("/{email}/{idTask}")
     public ResponseEntity updateTask(@PathVariable String email, @PathVariable UUID idTask, @RequestBody UpdateTask taskUpdated ){
         var user = DataBase.getUserByEmail(email);
 
@@ -73,7 +74,7 @@ public class TaskController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{email}/tasksUser/{idTask}/archive")
+    @PostMapping("/{email}/{idTask}/archive")
     public ResponseEntity archiveTask(@PathVariable String email, @PathVariable UUID idTask) {
 
         var task = DataBase.getTaskByID(idTask, email);
