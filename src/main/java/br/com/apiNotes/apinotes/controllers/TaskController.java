@@ -23,6 +23,7 @@ public class TaskController {
             return ResponseEntity.badRequest().body(new ErrorData("Usuário não localizado."));
         }
         user.getTasks().add(new Task(newTask));
+
         return ResponseEntity.ok().body(newTask);
     }
 
@@ -56,7 +57,7 @@ public class TaskController {
         var taskId = DataBase.getTaskByID(idTask, email);
 
         user.getTasks().remove(taskId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().body(taskId);
     }
 
     @PutMapping ("/{email}/{idTask}")
@@ -70,8 +71,8 @@ public class TaskController {
         }
 
         taskUpdateFilter.get().UpdateTask(taskUpdated);
-        
-        return ResponseEntity.noContent().build();
+
+        return ResponseEntity.ok().body(taskUpdateFilter);
     }
 
     @PostMapping("/{email}/{idTask}/archive")
